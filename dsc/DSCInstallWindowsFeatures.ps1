@@ -11,7 +11,7 @@ Configuration InstallWindowsFeatures {
         WindowsFeature Hyper-V {
             Name   = "Hyper-V"
             Ensure = "Present"
-		    IncludeAllSubFeature = $true
+            IncludeAllSubFeature = $true
         }
         WindowsFeature Hyper-V-PowerShell {
             Name   = "Hyper-V-PowerShell"

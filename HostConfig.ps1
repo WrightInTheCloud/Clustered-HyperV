@@ -1,44 +1,26 @@
 ﻿# Install NuGet provider, which is required for managing packages
-if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
-	Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-}
-# Create a new internal virtual switch named "Nat-Switch" if it doesn't already exist
-if (-not (Get-VMSwitch -Name "Nat-Switch" -ErrorAction SilentlyContinue)) {
-	New-VMSwitch -Name "Nat-Switch" -SwitchType Internal
-}
-# Create a new internal virtual switch named "Nat-Switch"
-# Assign an IP address to the virtual switch for NAT configuration
-$natSwitch = Get-VMSwitch -Name "Nat-Switch"
-# Assign an IP address to the virtual switch for NAT configuration
-New-NetIPAddress -IPAddress 172.16.0.1 -PrefixLength 24 -InterfaceAlias "vEthernet (Nat-Switch)"
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 
-# Create a NAT network using the virtual switch if it doesn't already exist
-if (-not (Get-NetNat -Name "Nat-Switch" -ErrorAction SilentlyContinue)) {
-	New-NetNat -Name "Nat-Switch" -InternalIPInterfaceAddressPrefix 172.16.0.0/24
-}
+### Hyper-V Specific Configuration ###
+# Create a new internal virtual switch named "Nat-Switch"
+New-VMSwitch -Name "Nat-Switch" -SwitchType Internal
+
 # Assign an IP address to the virtual switch for NAT configuration
 New-NetIPAddress -IPAddress 172.16.0.1 -PrefixLength 24 -InterfaceAlias "vEthernet (Nat-Switch)"
 
 # Create a NAT network using the virtual switch
-# Add the DHCP Server security group to the system if it does not already exist
-if (-not (Get-ADGroup -Filter { Name -eq "DHCP Server" } -ErrorAction SilentlyContinue)) {
-	Add-DhcpServerSecurityGroup
-}
+New-NetNat -Name "Nat-Switch" -InternalIPInterfaceAddressPrefix 172.16.0.0/24
+
 # Add the DHCP Server security group to the system
-# Create a DHCP scope for the nested VMs with a specified IP range if it doesn't already exist
-if (-not (Get-DhcpServerv4Scope | Where-Object { $_.Name -eq "Nested VMs" -or ($_.StartRange -eq "172.16.0.10" -and $_.EndRange -eq "172.16.0.100") })) {
-	Add-DhcpServerv4Scope -Name "Nested VMs" -StartRange 172.16.0.10 -EndRange 172.16.0.100 -SubnetMask 255.255.255.0
-}
+Add-DhcpServerSecurityGroup
+
 # Create a DHCP scope for the nested VMs with a specified IP range
-# Set DNS server and default gateway options for the DHCP scope
-$scope = Get-DhcpServerv4Scope | Where-Object { $_.Name -eq "Nested VMs" }
-Set-DhcpServerv4OptionValue -ScopeId $scope.ScopeId -DnsServer 168.63.129.16 -Router 172.16.0.1
+Add-DhcpServerv4Scope -Name "Nested VMs" -StartRange 172.16.0.10 -EndRange 172.16.0.100 -SubnetMask 255.255.255.0
+
 # Set DNS server and default gateway options for the DHCP scope
 Set-DhcpServerv4OptionValue -DnsServer 168.63.129.16 -Router 172.16.0.1
-# Ensure the DHCP Server role is installed and configured using official cmdlets
-if (-not (Get-WindowsFeature -Name 'DHCP' | Where-Object { $_.InstallState -eq 'Installed' })) {
-	Install-WindowsFeature -Name 'DHCP' -IncludeManagementTools
-}
+
+# Configure the DHCP server role to be in a ready state
 Set-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\ServerManager\Roles\12 -Name ConfigurationState -Value 2
 
 # Restart the DHCP server service to apply changes

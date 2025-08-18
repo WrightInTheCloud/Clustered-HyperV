@@ -8,4 +8,3 @@ param vnetName = 'vnet-hypervlab-01'
 param vnetaddressPrefix = '192.168.0.0/24'
 param subnetName = 'snet-hypervlab-01'
 param subnetPrefix = '192.168.0.0/28'
-

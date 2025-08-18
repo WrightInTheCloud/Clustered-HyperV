@@ -1,6 +1,5 @@
 using './main.bicep'
 
-param location = resourceGroup().location
 param computerName = 'HyperVHost'
 param AdminUsername = 'bob'
 param AdminPassword = 'TestD3ploy123!'

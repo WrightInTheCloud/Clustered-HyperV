@@ -277,11 +277,6 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       }
       securityType: 'TrustedLaunch'
     }
-  priority: 'Spot'
-  evictionPolicy: 'Deallocate'
-  billingProfile: {
-    maxPrice: -1
-  }
     networkProfile: {
       networkInterfaces: [
         {
@@ -309,7 +304,7 @@ resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2021-03-01' =
     settings: {
       wmfVersion: 'latest'
       configuration: {
-        url: 'https://github.com/WrightInTheCloud/Clustered-HyperV/blob/main/dsc/DSCInstallWindowsFeatures.zip'
+        url: 'https://github.com/george-markou/Azure-Hyper-V-Lab/blob/main/dsc/DSCInstallWindowsFeatures.zip'
         script: 'DSCInstallWindowsFeatures.ps1'
         function: 'InstallWindowsFeatures'
       }
@@ -318,7 +313,7 @@ resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2021-03-01' =
 }
 
 @description('Custom Script Execution. Configuration of Server Roles and deployment of software using Winget.')
-resource hostVmSetupExtension 'Microsoft.Compute/virtualMachines/extensions@2021-03-01' = {
+resource hostVmSetupExtension 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
   parent: vm
   name: 'HostConfiguration'
   location: location

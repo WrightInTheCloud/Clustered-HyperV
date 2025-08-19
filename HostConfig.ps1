@@ -39,14 +39,30 @@ New-Item -Path "F:\VMS\Templates" -ItemType Directory
 # Configure the VM host to use the created directories and enable Enhanced Session Mode
 Set-VMHost -VirtualMachinePath "F:\VMS" -VirtualHardDiskPath "F:\VMS\Disks" -EnableEnhancedSessionMode $true
 
-### Download Windows Server 2025 Evaluation ISO ###
-$isoUrl = "https://go.microsoft.com/fwlink/?linkid=2293312&clcid=0x409&culture=en-us&country=us"
+### Download Required ISOs and VHDs ###
+
+### Download Windows Server Evaluation ISO ###
+$Win2016 = "https://go.microsoft.com/fwlink/p/?LinkID=2195174&clcid=0x409&culture=en-us&country=US"
+$Win2019 = "https://go.microsoft.com/fwlink/p/?LinkID=2195167&clcid=0x409&culture=en-us&country=US"
+$Win2022 = "https://go.microsoft.com/fwlink/p/?LinkID=2195280&clcid=0x409&culture=en-us&country=US"
+$Win2025 = "https://go.microsoft.com/fwlink/?linkid=2293312&clcid=0x409&culture=en-us&country=us"
+### Download Azure Migrate Hyper-V VHD ###
+$AZMigHyperV = "https://go.microsoft.com/fwlink/?linkid=2191848"
 
 # The destination path for the downloaded ISO
-$isoDestination = "F:\VMS\ISO\WindowsServer2025Eval.iso"
+$iso2016 = "F:\VMS\ISO\WindowsServer2016Eval.iso"
+$iso2019 = "F:\VMS\ISO\WindowsServer2019Eval.iso"
+$iso2022 = "F:\VMS\ISO\WindowsServer2022Eval.iso"
+$iso2025 = "F:\VMS\ISO\WindowsServer2025Eval.iso"
+# The destination path for the Azure Migrate Hyper-V VHD
+$AZMigHyperVDest = "F:\VMS\Disks\AzureMigrateHyperV.vhdx"
 
 # Download the ISO file and save it to the specified location
-Start-BitsTransfer -Source $isoUrl -Destination $isoDestination
+Start-BitsTransfer -Source $Win2016 -Destination $iso2016 -Asynchronous
+Start-BitsTransfer -Source $Win2019 -Destination $iso2019 -Asynchronous
+Start-BitsTransfer -Source $Win2022 -Destination $iso2022 -Asynchronous
+Start-BitsTransfer -Source $Win2025 -Destination $iso2025 -Asynchronous
+Start-BitsTransfer -Source $AZMigHyperV -Destination $AZMigHyperVDest -Asynchronous
 
 ### Retrieve and Install Required Software ###
 # Install various tools and utilities using Winget
@@ -65,16 +81,6 @@ $Shell = New-Object -ComObject ("WScript.Shell")
 $Shortcut1 = $Shell.CreateShortcut("C:\Users\Public\Desktop\Windows Admin Center.url")
 $Shortcut1.TargetPath = "https://localhost:6516"  # URL for Windows Admin Center
 $Shortcut1.Save()
-
-# Create a shortcut for the Microsoft Evaluation Center
-$Shortcut2 = $Shell.CreateShortcut("C:\Users\Public\Desktop\Microsoft Evaluation Center.url")
-$Shortcut2.TargetPath = "https://www.microsoft.com/en-us/evalcenter/"  # URL for Evaluation Center
-$Shortcut2.Save()
-
-# Create a shortcut for the MSLAB GitHub Repository
-$Shortcut3 = $Shell.CreateShortcut("C:\Users\Public\Desktop\MSLAB GitHub Repository.url")
-$Shortcut3.TargetPath = "https://github.com/microsoft/MSLab"  # URL for MSLAB GitHub
-$Shortcut3.Save()
 
 # Copy the Hyper-V Manager shortcut to the desktop
 Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Hyper-V Manager.lnk" -Destination "C:\Users\Public\Desktop\Hyper-V Manager.lnk"

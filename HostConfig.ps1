@@ -31,6 +31,8 @@ Restart-Service -Name DHCPServer -Force
 Get-Disk | Where-Object -Property PartitionStyle -EQ "RAW" | Initialize-Disk -PartitionStyle GPT -PassThru | New-Volume -FileSystem REFS -AllocationUnitSize 65536 -DriveLetter F -FriendlyName "VMS"
 
 # Create necessary directories for VM configurations, ISOs, disks, and templates
+New-Item -Path "F:\Downloads\AzureMigrateAppliance" -ItemType Directory -Force
+New-Item -Path "F:\Downloads" -ItemType Directory -Force
 New-Item -Path "F:\VMS" -ItemType Directory -Force
 New-Item -Path "F:\VMS\ISO" -ItemType Directory -Force
 New-Item -Path "F:\VMS\Disks" -ItemType Directory -Force
@@ -55,7 +57,8 @@ $win2022IsoPath = "F:\VMS\ISO\WindowsServer2022Eval.iso"
 $win2025IsoPath = "F:\VMS\ISO\WindowsServer2025Eval.iso"
 
 # The destination path for the Azure Migrate Hyper-V VHD
-$azMigHyperVZipPath = "F:\VMS\Disks\AzureMigrateHyperV.zip"
+$azMigHyperVZipPath = "F:\Downloads\AzureMigrateHyperV.zip"
+$azMigAppliancePath = "F:\Downloads\AzureMigrateAppliance"
 
 # Download the ISO file and save it to the specified location
 Start-BitsTransfer -Source $win2016Url -Destination $win2016IsoPath
@@ -65,15 +68,8 @@ Start-BitsTransfer -Source $win2025Url -Destination $win2025IsoPath
 Start-BitsTransfer -Source $azMigHyperVUrl -Destination $azMigHyperVZipPath
 
 # Extract the Azure Migrate Hyper-V VHD and delete the zip file
-Expand-Archive -LiteralPath $azMigHyperVZipPath -DestinationPath "F:\VMS\Disks" -Force
+Expand-Archive -LiteralPath $azMigHyperVZipPath -DestinationPath $azMigAppliancePath -Force
 Remove-Item -Path $azMigHyperVZipPath -Force
-
-### Retrieve and Install Required Software ###
-# winget install --id "Microsoft.Azure.StorageExplorer" --silent --accept-source-agreements --accept-package-agreements --scope machine
-# winget install --id "Microsoft.PowerShell" --silent --accept-source-agreements --accept-package-agreements --scope machine
-# winget install --id "Microsoft.Azure.AZCopy.10" --silent --accept-source-agreements --accept-package-agreements --scope machine
-# winget install --id "Microsoft.WindowsAdminCenter" --silent --accept-source-agreements --accept-package-agreements --scope machine
-# winget install --id "Microsoft.AzureCLI" --silent --accept-source-agreements --accept-package-agreements --scope machine
 
 ### Create Desktop Shortcuts ###
 # Create a COM object to manage desktop shortcuts

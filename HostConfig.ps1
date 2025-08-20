@@ -69,20 +69,15 @@ Expand-Archive -LiteralPath $azMigHyperVZipPath -DestinationPath "F:\VMS\Disks" 
 Remove-Item -Path $azMigHyperVZipPath -Force
 
 ### Retrieve and Install Required Software ###
-winget install --id "Microsoft.Azure.StorageExplorer" --silent --accept-source-agreements --accept-package-agreements --scope machine
-winget install --id "Microsoft.PowerShell" --silent --accept-source-agreements --accept-package-agreements --scope machine
-winget install --id "Microsoft.Azure.AZCopy.10" --silent --accept-source-agreements --accept-package-agreements --scope machine
-winget install --id "Microsoft.WindowsAdminCenter" --silent --accept-source-agreements --accept-package-agreements --scope machine
-winget install --id "Microsoft.AzureCLI" --silent --accept-source-agreements --accept-package-agreements --scope machine
+# winget install --id "Microsoft.Azure.StorageExplorer" --silent --accept-source-agreements --accept-package-agreements --scope machine
+# winget install --id "Microsoft.PowerShell" --silent --accept-source-agreements --accept-package-agreements --scope machine
+# winget install --id "Microsoft.Azure.AZCopy.10" --silent --accept-source-agreements --accept-package-agreements --scope machine
+# winget install --id "Microsoft.WindowsAdminCenter" --silent --accept-source-agreements --accept-package-agreements --scope machine
+# winget install --id "Microsoft.AzureCLI" --silent --accept-source-agreements --accept-package-agreements --scope machine
 
 ### Create Desktop Shortcuts ###
 # Create a COM object to manage desktop shortcuts
 $Shell = New-Object -ComObject ("WScript.Shell")
-
-# Create a shortcut for Windows Admin Center
-$Shortcut1 = $Shell.CreateShortcut("C:\Users\Public\Desktop\Windows Admin Center.url")
-$Shortcut1.TargetPath = "https://localhost:6516"  # URL for Windows Admin Center
-$Shortcut1.Save()
 
 # Copy the Hyper-V Manager shortcut to the desktop
 Copy-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Hyper-V Manager.lnk" -Destination "C:\Users\Public\Desktop\Hyper-V Manager.lnk"

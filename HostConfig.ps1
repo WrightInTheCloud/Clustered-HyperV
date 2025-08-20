@@ -69,11 +69,11 @@ Expand-Archive -LiteralPath $azMigHyperVZipPath -DestinationPath "F:\VMS\Disks" 
 Remove-Item -Path $azMigHyperVZipPath -Force
 
 ### Retrieve and Install Required Software ###
-winget install --id "Microsoft.Azure.StorageExplorer" --silent --accept-source-agreements --accept-package-agreements
-winget install --id "Microsoft.PowerShell" --silent --accept-source-agreements --accept-package-agreements
-winget install --id "Microsoft.Azure.AZCopy.10" --silent --accept-source-agreements --accept-package-agreements
-winget install --id "Microsoft.WindowsAdminCenter" --silent --accept-source-agreements --accept-package-agreements
-winget install --id "Microsoft.AzureCLI" --silent --accept-source-agreements --accept-package-agreements
+winget install --id "Microsoft.Azure.StorageExplorer" --silent --accept-source-agreements --accept-package-agreements --scope machine
+winget install --id "Microsoft.PowerShell" --silent --accept-source-agreements --accept-package-agreements --scope machine
+winget install --id "Microsoft.Azure.AZCopy.10" --silent --accept-source-agreements --accept-package-agreements --scope machine
+winget install --id "Microsoft.WindowsAdminCenter" --silent --accept-source-agreements --accept-package-agreements --scope machine
+winget install --id "Microsoft.AzureCLI" --silent --accept-source-agreements --accept-package-agreements --scope machine
 
 ### Create Desktop Shortcuts ###
 # Create a COM object to manage desktop shortcuts

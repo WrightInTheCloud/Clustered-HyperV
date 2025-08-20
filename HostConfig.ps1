@@ -48,6 +48,8 @@ $Win2022 = "https://go.microsoft.com/fwlink/p/?LinkID=2195280&clcid=0x409&cultur
 $Win2025 = "https://go.microsoft.com/fwlink/?linkid=2293312&clcid=0x409&culture=en-us&country=us"
 ### Download Azure Migrate Hyper-V VHD ###
 $AZMigHyperV = "https://go.microsoft.com/fwlink/?linkid=2191848"
+###
+$PS752 = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.2/PowerShell-7.5.2-win-x64.msi"
 
 # The destination path for the downloaded ISO
 $iso2016 = "F:\VMS\ISO\WindowsServer2016Eval.iso"
@@ -55,14 +57,20 @@ $iso2019 = "F:\VMS\ISO\WindowsServer2019Eval.iso"
 $iso2022 = "F:\VMS\ISO\WindowsServer2022Eval.iso"
 $iso2025 = "F:\VMS\ISO\WindowsServer2025Eval.iso"
 # The destination path for the Azure Migrate Hyper-V VHD
-$AZMigHyperVDest = "F:\VMS\Disks\AzureMigrateHyperV.vhdx"
+$AZMigHyperVDest = "F:\VMS\Disks\AzureMigrateHyperV.zip"
+# The destination path for PowerShell 7.5.2 installer
+$PS752Dest = "F:\PowerShell-7.5.2-win-x64.msi"
 
 # Download the ISO file and save it to the specified location
-Start-BitsTransfer -Source $Win2016 -Destination $iso2016 -Asynchronous
-Start-BitsTransfer -Source $Win2019 -Destination $iso2019 -Asynchronous
-Start-BitsTransfer -Source $Win2022 -Destination $iso2022 -Asynchronous
-Start-BitsTransfer -Source $Win2025 -Destination $iso2025 -Asynchronous
-Start-BitsTransfer -Source $AZMigHyperV -Destination $AZMigHyperVDest -Asynchronous
+Start-BitsTransfer -Source $Win2016 -Destination $iso2016
+Start-BitsTransfer -Source $Win2019 -Destination $iso2019
+Start-BitsTransfer -Source $Win2022 -Destination $iso2022
+Start-BitsTransfer -Source $Win2025 -Destination $iso2025
+Start-BitsTransfer -Source $AZMigHyperV -Destination $AZMigHyperVDest
+Start-BitsTransfer -Source $PS752 -Destination $PS752Dest
+
+# Install PowerShell 7.5.2 from the downloaded MSI file
+Start-Process -FilePath $PS752Dest -ArgumentList "/quiet" -Wait
 
 ### Retrieve and Install Required Software ###
 # Install various tools and utilities using Winget

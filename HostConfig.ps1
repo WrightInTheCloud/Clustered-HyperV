@@ -1,5 +1,5 @@
 ﻿# Install NuGet provider, which is required for managing packages
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+Install-PackageProvider -Name NuGet -Force
 
 ### Hyper-V Specific Configuration ###
 # Create a new internal virtual switch named "Nat-Switch"
@@ -31,47 +31,49 @@ Restart-Service -Name DHCPServer -Force
 Get-Disk | Where-Object -Property PartitionStyle -EQ "RAW" | Initialize-Disk -PartitionStyle GPT -PassThru | New-Volume -FileSystem REFS -AllocationUnitSize 65536 -DriveLetter F -FriendlyName "VMS"
 
 # Create necessary directories for VM configurations, ISOs, disks, and templates
-New-Item -Path "F:\VMS" -ItemType Directory
-New-Item -Path "F:\VMS\ISO" -ItemType Directory
-New-Item -Path "F:\VMS\Disks" -ItemType Directory
-New-Item -Path "F:\VMS\Templates" -ItemType Directory
+New-Item -Path "F:\VMS" -ItemType Directory -Force
+New-Item -Path "F:\VMS\ISO" -ItemType Directory -Force
+New-Item -Path "F:\VMS\Disks" -ItemType Directory -Force
+New-Item -Path "F:\VMS\Templates" -ItemType Directory -Force
 
 # Configure the VM host to use the created directories and enable Enhanced Session Mode
 Set-VMHost -VirtualMachinePath "F:\VMS" -VirtualHardDiskPath "F:\VMS\Disks" -EnableEnhancedSessionMode $true
 
-### Download Required ISOs and VHDs ###
-
 ### Download Windows Server Evaluation ISO ###
-$Win2016 = "https://go.microsoft.com/fwlink/p/?LinkID=2195174&clcid=0x409&culture=en-us&country=US"
-$Win2019 = "https://go.microsoft.com/fwlink/p/?LinkID=2195167&clcid=0x409&culture=en-us&country=US"
-$Win2022 = "https://go.microsoft.com/fwlink/p/?LinkID=2195280&clcid=0x409&culture=en-us&country=US"
-$Win2025 = "https://go.microsoft.com/fwlink/?linkid=2293312&clcid=0x409&culture=en-us&country=us"
+$win2016Url = "https://go.microsoft.com/fwlink/p/?LinkID=2195174&clcid=0x409&culture=en-us&country=US"
+$win2019Url = "https://go.microsoft.com/fwlink/p/?LinkID=2195167&clcid=0x409&culture=en-us&country=US"
+$win2022Url = "https://go.microsoft.com/fwlink/p/?LinkID=2195280&clcid=0x409&culture=en-us&country=US"
+$Win2025Url = "https://go.microsoft.com/fwlink/?linkid=2293312&clcid=0x409&culture=en-us&country=us"
+
 ### Download Azure Migrate Hyper-V VHD ###
-$AZMigHyperV = "https://go.microsoft.com/fwlink/?linkid=2191848"
+$AZMigHyperVUrl = "https://go.microsoft.com/fwlink/?linkid=2191848"
 
 # The destination path for the downloaded ISO
-$iso2016 = "F:\VMS\ISO\WindowsServer2016Eval.iso"
-$iso2019 = "F:\VMS\ISO\WindowsServer2019Eval.iso"
-$iso2022 = "F:\VMS\ISO\WindowsServer2022Eval.iso"
-$iso2025 = "F:\VMS\ISO\WindowsServer2025Eval.iso"
+$win2016IsoPath = "F:\VMS\ISO\WindowsServer2016Eval.iso"
+$win2019IsoPath = "F:\VMS\ISO\WindowsServer2019Eval.iso"
+$win2022IsoPath = "F:\VMS\ISO\WindowsServer2022Eval.iso"
+$win2025IsoPath = "F:\VMS\ISO\WindowsServer2025Eval.iso"
+
 # The destination path for the Azure Migrate Hyper-V VHD
-$AZMigHyperVDest = "F:\VMS\Disks\AzureMigrateHyperV.zip"
+$azMigHyperVZipPath = "F:\VMS\Disks\AzureMigrateHyperV.zip"
 
 # Download the ISO file and save it to the specified location
-Start-BitsTransfer -Source $Win2016 -Destination $iso2016
-Start-BitsTransfer -Source $Win2019 -Destination $iso2019
-Start-BitsTransfer -Source $Win2022 -Destination $iso2022
-Start-BitsTransfer -Source $Win2025 -Destination $iso2025
-Start-BitsTransfer -Source $AZMigHyperV -Destination $AZMigHyperVDest
+Start-BitsTransfer -Source $win2016Url -Destination $win2016IsoPath
+Start-BitsTransfer -Source $win2019Url -Destination $win2019IsoPath
+Start-BitsTransfer -Source $win2022Url -Destination $win2022IsoPath
+Start-BitsTransfer -Source $win2025Url -Destination $win2025IsoPath
+Start-BitsTransfer -Source $azMigHyperVUrl -Destination $azMigHyperVZipPath
 
+# Extract the Azure Migrate Hyper-V VHD and delete the zip file
+Expand-Archive -LiteralPath $azMigHyperVZipPath -DestinationPath "F:\VMS\Disks" -Force
+Remove-Item -Path $azMigHyperVZipPath -Force
 
 ### Retrieve and Install Required Software ###
-# Install various tools and utilities using Winget
-winget install --id "Microsoft.Azure.StorageExplorer" --silent --accept-source-agreements --accept-package-agreements   # Azure Storage Explorer
-winget install --id "Microsoft.PowerShell" --silent --accept-source-agreements --accept-package-agreements              # Powershell 7
-winget install --id "Microsoft.Azure.AZCopy.10" --silent --accept-source-agreements --accept-package-agreements         # AzCopy Utility
-winget install --id "Microsoft.WindowsAdminCenter" --silent --accept-source-agreements --accept-package-agreements      # Windows Admin Center
-winget install --id "Microsoft.AzureCLI" --silent --accept-source-agreements --accept-package-agreements                # Azure CLI
+winget install --id "Microsoft.Azure.StorageExplorer" --silent --accept-source-agreements --accept-package-agreements
+winget install --id "Microsoft.PowerShell" --silent --accept-source-agreements --accept-package-agreements
+winget install --id "Microsoft.Azure.AZCopy.10" --silent --accept-source-agreements --accept-package-agreements
+winget install --id "Microsoft.WindowsAdminCenter" --silent --accept-source-agreements --accept-package-agreements
+winget install --id "Microsoft.AzureCLI" --silent --accept-source-agreements --accept-package-agreements
 
 ### Create Desktop Shortcuts ###
 # Create a COM object to manage desktop shortcuts

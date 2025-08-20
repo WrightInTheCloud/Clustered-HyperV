@@ -91,7 +91,7 @@ param subnetName string = 'snet-hypervlab-01'
 param subnetPrefix string = '192.168.0.0/28'
 
 @description('Deployment of Network Security Group(NSG)')
-resource nsg 'Microsoft.Network/networkSecurityGroups@2021-05-01' = {
+resource nsg 'Microsoft.Network/networkSecurityGroups@2024-07-01' = {
   name: '${computerName}-nsg'
   location: resourceGroup().location
   properties: {
@@ -118,7 +118,7 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2021-05-01' = {
 }
 
 @description('Deployment of Virtual Network(VNet)')
-resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
+resource vnet 'Microsoft.Network/virtualNetworks@2024-07-01' = {
   name: '${vnetName}-vnet'
   location: resourceGroup().location
    properties: {
@@ -139,7 +139,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 }
 
 @description('Deployment of Public IP Address(PIP)')
-resource vmPip 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
+resource vmPip 'Microsoft.Network/publicIPAddresses@2024-07-01' = {
   name: '${computerName}-pip'
   location: resourceGroup().location
   sku: {
@@ -153,7 +153,7 @@ resource vmPip 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
 }
 
 @description('Deployment of Network Interface Card(NIC)')
-resource vmNic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
+resource vmNic 'Microsoft.Network/networkInterfaces@2024-07-01' = {
   name: '${computerName}-nic'
   location: resourceGroup().location
   properties: {
@@ -185,7 +185,7 @@ resource vmNic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
 }
 
 @description('Deployment of Virtual Machine with Nested Virtualization')
-resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+resource vm 'Microsoft.Compute/virtualMachines@2024-11-01' = {
   name: computerName
   location: location
   properties: {

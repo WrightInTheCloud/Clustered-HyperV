@@ -74,12 +74,11 @@ Start-Process -FilePath $PS752Dest -ArgumentList "/quiet" -Wait
 
 ### Retrieve and Install Required Software ###
 # Install various tools and utilities using Winget
-winget install --id "Microsoft.Azure.StorageExplorer" -e -h   # Azure Storage Explorer
-winget install --id "Microsoft.PowerShell" -e -h              # Powershell 7
-winget install --id "Microsoft.Azure.AZCopy.10" -e -h         # AzCopy Utility
-winget install --id "Microsoft.WindowsAdminCenter" -e -h      # Windows Admin Center
-winget install --id "Microsoft.AzureCLI" -e -h                # Azure CLI
-winget install --id "7zip.7zip" -e -h                         # 7-Zip File Archiver
+winget install --id "Microsoft.Azure.StorageExplorer" --silent --accept-source-agreements --accept-package-agreements   # Azure Storage Explorer
+winget install --id "Microsoft.PowerShell" --silent --accept-source-agreements --accept-package-agreements              # Powershell 7
+winget install --id "Microsoft.Azure.AZCopy.10" --silent --accept-source-agreements --accept-package-agreements         # AzCopy Utility
+winget install --id "Microsoft.WindowsAdminCenter" --silent --accept-source-agreements --accept-package-agreements      # Windows Admin Center
+winget install --id "Microsoft.AzureCLI" --silent --accept-source-agreements --accept-package-agreements                # Azure CLI
 
 ### Create Desktop Shortcuts ###
 # Create a COM object to manage desktop shortcuts
